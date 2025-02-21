@@ -1,0 +1,10 @@
+---
+# tasks file for new-role
+- name: update packages
+  apt:
+    update_cache: yes
+
+      # - name: install apache
+      #   apt:
+      #     name: nginx
+      #     state: present
