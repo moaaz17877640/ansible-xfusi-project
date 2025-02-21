@@ -1,0 +1,53 @@
+---
+- hosts: web
+  remote_user: ubuntu
+  become: yes
+  vars:
+    - directory_name: test
+    - myname: moaz
+  vars_prompt:
+    - name: password
+      prompt: "Enter password plz?"
+      private: false
+  tasks:
+    - name: update packages
+      apt:
+        update_cache: yes
+
+    - name: install apache
+      apt:
+        name: nginx
+        state: present
+
+    - name: create dir
+      file:
+        path: "{{ directory_name }}"
+        state: directory
+      when : myname == 'ahmed'
+
+    - name: list contents of the directory
+      command: "ls {{ directory_name }}"
+      register: result
+
+    - name: display command result
+      debug:
+        var: result.stdout
+
+    - name: copy template
+      template:
+        src: temp
+        dest: "temp"  # Change this to your actual destination path
+      notify: restart apache
+    - name: Add several users
+      user:
+       name: "{{ item }}"
+       state: present
+     
+      with_items:
+      - testuser1
+      - testuser2
+  handlers:    
+    - name : restart apache  
+      service:
+        name: nginx
+        state: restarted
